@@ -14,11 +14,12 @@
     <div class="container">
         <div class="jumbotron text-center">
             <h1>Mission to Mars</h1>
-            <p><a class="btn btn-primary btn-lg" href="/scrape"
+            <p><a class="btn btn-success btn-lg" href="/scrape"
                   role="button">Scrape New Data</a></p>
         </div>
-     </div>
-     <!-- Mars News -->
+    <!-- </div> --> 
+
+    <!-- Mars News -->
     <div class="row" id="mars-news">
         <div class="col-md-12">
             <div class="media">
@@ -39,19 +40,27 @@
         <!-- Mars Facts -->
         <div class="col-md-4"><!-- Mars Facts -->
             <div class="row" id="mars-facts">
-              <h4>Mars Facts</h4>
-              {{ mars.facts | safe }}
+                <h4><em>Mars Facts</em></h4>
+                {{ mars.facts | safe }}
             </div>
         </div>
-        </div>
     </div>
-    <!--Mars Hemispheres-->
-    <div class="row" id="mars-hemispheres">
-        {% for hemisphere in mars.hemispheres %}
-        <div class="col-md-4">
-            <img src="{{ mars.hemispheres_image_urls }}"/>
+
+        <!--Mars Hemispheres-->
+        <h2><p style="text-align:center">Mars Hemispheres</p></h2> 
+            <div class="row" id="mars-hemispheres">
+            {% for hemisphere in mars.hemispheres %}
+                <!-- <div class="col-md-2"> -->
+                <div class="col-md-6">
+                                                           
+                    <!-- <h4>{{hemisphere.title}}</h4> -->
+                    <div class="thumbnail">
+                    <img src="{{ hemisphere.img_url }}" class="img-responsive"/>
+                    <div class="caption">{{hemisphere.title}}</div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </body>
 </html>

@@ -20,7 +20,7 @@ def scrape_all():
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
         "last_modified": dt.datetime.now(),
-        "hemispheres": hemispheres_image_urls({})
+        "hemispheres": hemi_image_urls(browser)
     }
     # Stop webdriver and return data
     browser.quit()
@@ -98,13 +98,10 @@ def mars_facts():
     return df.to_html(classes="table table-striped")
 
 
-def hemispheres_image_urls():
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path)
+def hemi_image_urls(browser):
     url = 'https://data-class-mars-hemispheres.s3.amazonaws.com/Mars_Hemispheres/index.html'
     browser.visit(url)
-    from bs4 import BeautifulSoup as bs
-
+    
     # 2. Create a list to hold the images and titles.
     hemispheres_image_urls = []
 
@@ -112,19 +109,27 @@ def hemispheres_image_urls():
     # Scrape all items that contain mars hemispheres information
 
     # Sign main url for loop
-    hemispheres_urls = browser.find_by_css(".item .description .itemLink")
-    
-    # Loop through the list of all hemispheres information
-    for i in range(len(hemispheres_urls)):
-        browser.find_by_css(".item .description .itemLink")[i].click()
-        title = browser.find_by_css("h2").text
-        img_url = browser.links.find_by_text("Original")[0]["href"]
-        
+    hemispheres = browser.find_by_css(".results .item")
+    hemi_urls = []
+    for hemisphere in hemispheres:
+        detail_url = hemisphere.find_by_tag('a')['href']
+        hemi_urls.append(detail_url)
+   
+    # Scrapes thumbnails
+    # for hemisphere in hemispheres:
+    #     img_url = hemisphere.find_by_tag("img")['src']
+    #     title = hemisphere.find_by_tag("h3").text
+    #     hemispheres_image_urls.append({"title" : title, "img_url" : img_url})
+
+    for hemi_url in hemi_urls:
+        browser.visit(hemi_url)
+        title = browser.find_by_tag("h2").text
+        img_url = browser.find_by_css(".downloads").find_by_tag("a")['href']
         hemispheres_image_urls.append({"title" : title, "img_url" : img_url})
         browser.back()
- 
-        # 4. Print the list that holds the dictionary of each image url and title.
-        return hemispheres_image_urls
+
+    # 4. Print the list that holds the dictionary of each image url and title.
+    return hemispheres_image_urls
 
 
 if __name__ == "__main__":
@@ -132,5 +137,3 @@ if __name__ == "__main__":
     # If running as script, print scraped data
     print(scrape_all())
     
-    # # 5. Quit the browser
-    # browser.quit()
